@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tenantly: a private workspace for every company</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#14213d;--paper:#f5f7fa;--card:#fff;--line:#dde3ec;--muted:#5b667a;--accent:#f2a900;--danger:#b42318;--ok:#17653a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 "Plus Jakarta Sans",system-ui,sans-serif}
+[hidden]{display:none!important}
+button,input{font:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.top{display:flex;justify-content:space-between;align-items:center;padding:1rem clamp(1rem,4vw,3rem);background:var(--ink);color:#fff}
+.brand{font-weight:800;font-size:1.25rem;letter-spacing:-.01em}
+.brand i{display:inline-block;width:.8rem;height:.8rem;background:var(--accent);border-radius:50%;margin-right:.5rem}
+.wrap{max-width:1080px;margin:0 auto;padding:2rem clamp(1rem,4vw,2rem)}
+.hero{display:grid;grid-template-columns:1.15fr 1fr;gap:3rem;align-items:center}
+h1{font-size:clamp(2rem,4.5vw,3.4rem);line-height:1.08;letter-spacing:-.03em;margin:0 0 1rem;font-weight:800}
+.lead{color:var(--muted);max-width:46ch;margin:0 0 2rem}
+.tenants{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:460px}
+.t{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem}
+.t b{display:block;margin-bottom:.4rem}
+.t small{display:block;color:var(--muted);border-top:1px solid var(--line);padding:.3rem 0}
+.t.b{margin-top:1.5rem;border-color:var(--accent)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.5rem}
+.tabs{display:flex;gap:.25rem;margin-bottom:1.25rem;border-bottom:1px solid var(--line)}
+.tabs button{background:none;border:0;padding:.6rem 1rem;cursor:pointer;color:var(--muted);font-weight:500;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected=true]{color:var(--ink);font-weight:700;border-color:var(--accent)}
+label{display:block;font-weight:500;font-size:.9rem;margin:.8rem 0 .25rem}
+input{width:100%;padding:.65rem .75rem;border:1px solid #b9c3d3;border-radius:8px;background:#fff}
+.btn{margin-top:1.1rem;background:var(--ink);color:#fff;border:0;border-radius:8px;padding:.7rem 1.2rem;font-weight:700;cursor:pointer}
+.btn:hover{background:#0d1730}
+.btn.ghost{background:none;color:#fff;border:1px solid #ffffff66;margin:0;padding:.4rem .9rem;font-weight:500}
+.btn.sm{margin:0;padding:.65rem 1rem}
+.btn.del{background:none;color:var(--danger);border:1px solid #e8c4c0;padding:.25rem .7rem;margin:0;font-weight:500}
+.msg{min-height:1.4em;margin:.8rem 0 0;font-size:.9rem}.err{color:var(--danger)}
+.hint{color:var(--muted);font-size:.85rem;margin:.6rem 0 0}
+.who{display:flex;gap:.75rem;align-items:center;font-size:.9rem}
+.badge{background:var(--accent);color:var(--ink);font-weight:700;font-size:.75rem;border-radius:99px;padding:.1rem .6rem}
+.badge.m{background:#e3e8f0}
+.grid{display:grid;grid-template-columns:1.4fr 1fr;gap:1.5rem;align-items:start}
+h2{margin:0 0 .25rem;font-size:1.3rem;letter-spacing:-.01em}
+.sub{margin:0 0 1rem;color:var(--muted);font-size:.9rem}
+.add{display:flex;gap:.5rem;margin-bottom:1rem}.add input:nth-child(2){max-width:7rem}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:.85rem;color:var(--muted);font-weight:500;padding:.4rem 0;border-bottom:1px solid var(--line)}
+td{padding:.65rem 0;border-bottom:1px solid var(--line)}td:last-child,th:last-child{text-align:right}
+.empty{color:var(--muted);padding:1rem 0}
+ul{list-style:none;margin:0;padding:0}li{display:flex;justify-content:space-between;align-items:center;gap:.5rem;padding:.6rem 0;border-bottom:1px solid var(--line);word-break:break-all}
+@media(max-width:860px){.hero,.grid{grid-template-columns:1fr}.hero{gap:2rem}}
+@media(prefers-reduced-motion:no-preference){.btn{transition:background .15s}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><i></i>Tenantly</div>
+  <div class="who" id="who" hidden><span id="whoText"></span><span class="badge" id="role"></span><button class="btn ghost" onclick="logout()">Log out</button></div>
+</header>
+
+<main class="wrap" id="auth">
+  <section class="hero">
+    <div>
+      <h1>Many companies. One app. No mixed-up data.</h1>
+      <p class="lead">Every company gets its own private workspace. Create yours in seconds, add products and invite your team.</p>
+      <div class="tenants" aria-label="Example of two separate workspaces">
+        <div class="t"><b>Ali Store</b><small>Rice 5kg</small><small>Cooking oil</small></div>
+        <div class="t b"><b>Sara Boutique</b><small>Lawn suit</small><small>Dupatta</small></div>
+      </div>
+      <p class="hint">Each company sees only its own list.</p>
+    </div>
+    <div class="panel">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tabLogin" aria-selected="true" onclick="tab('login')">Log in</button>
+        <button role="tab" id="tabReg" aria-selected="false" onclick="tab('reg')">Create a company</button>
+      </div>
+      <form id="fLogin" onsubmit="return login(event)">
+        <label for="lc">Company name</label><input id="lc" autocomplete="organization" required>
+        <label for="le">Email</label><input id="le" type="email" autocomplete="email" required>
+        <label for="lp">Password</label><input id="lp" type="password" autocomplete="current-password" required>
+        <button class="btn">Log in</button>
+        <p class="hint">Team members: use the company name your admin gave you.</p>
+      </form>
+      <form id="fReg" onsubmit="return register(event)" hidden>
+        <label for="rc">Company name</label><input id="rc" autocomplete="organization" required>
+        <label for="re">Your email (you will be the admin)</label><input id="re" type="email" autocomplete="email" required>
+        <label for="rp">Password (at least 6 characters)</label><input id="rp" type="password" minlength="6" autocomplete="new-password" required>
+        <button class="btn">Create company</button>
+      </form>
+      <p class="msg err" id="err" role="alert"></p>
+    </div>
+  </section>
+</main>
+
+<main class="wrap" id="app" hidden>
+  <div class="grid">
+    <section class="panel">
+      <h2>Products</h2><p class="sub">Everything your company sells.</p>
+      <form class="add" onsubmit="return addProduct(event)">
+        <input id="pn" placeholder="Product name" aria-label="Product name" required>
+        <input id="pp" type="number" min="0" step="any" placeholder="Price" aria-label="Price">
+        <button class="btn sm">Add product</button>
+      </form>
+      <div id="plist"></div>
+    </section>
+    <section class="panel" id="team">
+      <h2>Team</h2><p class="sub">People who can log in to this company. Only admins see this.</p>
+      <form onsubmit="return addUser(event)">
+        <input id="ue" type="email" placeholder="Member email" aria-label="Member email" required>
+        <input id="up" type="password" minlength="6" placeholder="Password (6+ characters)" aria-label="Member password" required style="margin-top:.5rem">
+        <button class="btn sm" style="margin-top:.5rem">Add team member</button>
+      </form>
+      <ul id="ulist" style="margin-top:1rem"></ul>
+    </section>
+  </div>
+  <p class="msg err" id="err2" role="alert"></p>
+</main>
+
+<script>
+let token = localStorage.token, me;
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money = (n) => 'Rs ' + Number(n).toLocaleString('en-US');
+
+async function api(path, method = 'GET', body) {
+  const r = await fetch('/api' + path, { method,
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+    body: body && JSON.stringify(body) });
+  const d = r.status === 204 ? {} : await r.json().catch(() => ({}));
+  if (!r.ok) { const e = new Error(d.error || 'Something went wrong.'); e.status = r.status; throw e; }
+  return d;
+}
+function tab(t) {
+  const login = t === 'login';
+  $('fLogin').hidden = !login; $('fReg').hidden = login; $('err').textContent = '';
+  $('tabLogin').setAttribute('aria-selected', login); $('tabReg').setAttribute('aria-selected', !login);
+}
+function enter(t) {
+  token = t; localStorage.token = t; me = JSON.parse(atob(t.split('.')[1]));
+  $('auth').hidden = true; $('app').hidden = false; $('who').hidden = false;
+  $('whoText').textContent = me.tenant + ' · ' + me.email;
+  $('role').textContent = me.role === 'admin' ? 'Admin' : 'Member';
+  $('role').className = 'badge' + (me.role === 'admin' ? '' : ' m');
+  $('team').hidden = me.role !== 'admin';
+  load();
+}
+async function login(e) { e.preventDefault();
+  try { enter((await api('/login', 'POST', { company: $('lc').value, email: $('le').value, password: $('lp').value })).token); }
+  catch (x) { $('err').textContent = x.message; } return false; }
+async function register(e) { e.preventDefault();
+  try { enter((await api('/register', 'POST', { company: $('rc').value, email: $('re').value, password: $('rp').value })).token); }
+  catch (x) { $('err').textContent = x.message; } return false; }
+function logout() { localStorage.removeItem('token'); location.reload(); }
+
+async function load() {
+  try {
+    const ps = await api('/products'), admin = me.role === 'admin';
+    $('plist').innerHTML = ps.length
+      ? `<table><thead><tr><th>Name</th><th>Price</th>${admin ? '<th></th>' : ''}</tr></thead><tbody>` +
+        ps.map(p => `<tr><td>${esc(p.name)}</td><td>${money(p.price)}</td>${admin ? `<td><button class="btn del" onclick="delProduct(${p.id})">Delete</button></td>` : ''}</tr>`).join('') + '</tbody></table>'
+      : '<p class="empty">No products yet. Add your first product above.</p>';
+    if (admin) $('ulist').innerHTML = (await api('/users')).map(u =>
+      `<li><span>${esc(u.email)}</span><span class="badge ${u.role === 'admin' ? '' : 'm'}">${u.role === 'admin' ? 'Admin' : 'Member'}</span></li>`).join('');
+  } catch (x) { if (x.status === 401) logout(); else $('err2').textContent = x.message; }
+}
+async function addProduct(e) { e.preventDefault(); $('err2').textContent = '';
+  try { await api('/products', 'POST', { name: $('pn').value, price: $('pp').value }); $('pn').value = $('pp').value = ''; load(); }
+  catch (x) { $('err2').textContent = x.message; } return false; }
+async function delProduct(id) { try { await api('/products/' + id, 'DELETE'); load(); } catch (x) { $('err2').textContent = x.message; } }
+async function addUser(e) { e.preventDefault(); $('err2').textContent = '';
+  try { await api('/users', 'POST', { email: $('ue').value, password: $('up').value }); $('ue').value = $('up').value = ''; load(); }
+  catch (x) { $('err2').textContent = x.message; } return false; }
+
+if (token) { try { enter(token); } catch { logout(); } }
+</script>
+</body>
+</html>
